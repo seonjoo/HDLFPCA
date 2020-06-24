@@ -2,7 +2,7 @@
 #'
 #'
 #' For V-by-J dimensioanl matrix of Y, HDLPCA first reduce the dimension of p to J if V>J:
-#' Y = UDV. Then, longitudinal PCA is applied to the projected scores of Y on the p-dimensional subspace: \tilde{Y}=DY.
+#' Y = UDV. Then, longitudinal PCA is applied to the projected scores of Y on the p-dimensional subspace: Y1=DY.
 #' The dimension of the subspace is selected based on the variance explained by first p-components.
 #' The default value is projectthresh=1.
 #'
@@ -35,7 +35,7 @@
 #' xi = t(matrix(rnorm(I*3),ncol=I)*c(8,4,2))*3
 #' zeta = t(matrix(rnorm(J*3),ncol=J)*c(8,4,2))*2
 #' Y = phix0%*% t(xi[rep(1:I, visit),]) + phix1%*% t(time * xi[rep(1:I, visit),]) + phiw %*% t(zeta) + matrix(rnorm(V*J,0,.1),V,J)
-#' library(Lpredict)
+#' library(HDLFPCA)
 #' re<-hd_lfpca(Y,T=scale(time,center=TRUE,scale=TRUE),J=J,I=I,visit=visit, varthresh=0.95, projectthresh=1,timeadjust=FALSE,figure=TRUE)
 #' cor(phix0, re$phix0)
 #' cor(phix1, re$phix1)
