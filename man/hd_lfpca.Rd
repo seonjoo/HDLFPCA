@@ -11,7 +11,6 @@ hd_lfpca(
   I,
   visit,
   verbose = 1,
-  prefix = date(),
   Nx = NA,
   Nw = NA,
   varthresh = 0.99,
@@ -23,7 +22,7 @@ hd_lfpca(
 \arguments{
 \item{Y}{p-by-J matrix,}
 
-\item{T}{Time of theimage collection}
+\item{T}{Time of the image collection}
 
 \item{J}{Total number of observations}
 
@@ -31,59 +30,108 @@ hd_lfpca(
 
 \item{visit}{Vector of number of visits per subjects}
 
-\item{verbose}{(default=FALSE)}
+\item{verbose}{print diagnostic messages, higher number for more verbosity}
 
 \item{Nx}{Dimension of the subject-specific components}
 
 \item{Nw}{Dimension of the subject-visit specific components}
 
-\item{varthresh}{(default=0.99) Threshold for variance explained for both subject-specific and subject-visit specific compoents for dimension selection}
+\item{varthresh}{(default=0.99) Threshold for variance explained for both subject-specific and subject-visit specific components for dimension selection}
 
 \item{projectthresh}{Threshold for variance explain in the first step of SVD}
 
 \item{timeadjust}{(default=FALSE) Scale time per subject}
+
+\item{figure}{should a bar plot of the variance explained be plotted?}
 }
 \value{
 xi : Subject-specific principal component scores.
 
-phix0: Subject-specific principal comonent loadings corresponding to intercept.
+phix0: Subject-specific principal component loadings corresponding to intercept.
 
-phix1: Subject-specific principal comonent loadings corresponding to slope.
+phix1: Subject-specific principal component loadings corresponding to slope.
 
 zeta : Subject-visit-specific principal component scores.
 
-phiw : Subject-visit-specific principal comonent loadings
+phiw : Subject-visit-specific principal component loadings
 }
 \description{
-For V-by-J dimensioanl matrix of Y, HDLPCA first reduce the dimension of p to J if V>J:
-Y = UDV. Then, longitudinal PCA is applied to the projected scores of Y on the p-dimensional subspace: Y1=DY.
+For V-by-J dimensional matrix of Y, HDLPCA first reduce the dimension of p to J if V>J:
+`Y = UDV`. Then, longitudinal PCA is applied to the projected scores of Y on the p-dimensional subspace: Y1=DY.
 The dimension of the subspace is selected based on the variance explained by first p-components.
-The default value is projectthresh=1.
+The default value is `projectthresh`=1.
 }
 \examples{
 set.seed(12345678)
-I=100
-visit=rpois(I,1)+3
-time = unlist(lapply(visit, function(x) scale(c(0,cumsum(rpois(x-1,1)+1)))))
+I = 100
+visit = rpois(I, 1) + 3
+time = unlist(lapply(visit, function(x)
+  scale(c(0, cumsum(
+    rpois(x - 1, 1) + 1
+  )))))
 J = sum(visit)
-V=2500
-phix0 = matrix(0,V,3);phix0[1:50,1]<-.1;phix0[1:50 + 50,2]<-.1;phix0[1:50 + 100,3]<-.1
-phix1 = matrix(0,V,3);phix1[1:50+150,1]<-.1;phix1[1:50 + 200,2]<-.1;phix1[1:50 + 250,3]<-.1
-phiw = matrix(0,V,3);phiw[1:50+300,1]<-.1;phiw[1:50 + 350,2]<-.1;phiw[1:50 + 400,3]<-.1
-xi = t(matrix(rnorm(I*3),ncol=I)*c(8,4,2))*3
-zeta = t(matrix(rnorm(J*3),ncol=J)*c(8,4,2))*2
-Y = phix0\%*\% t(xi[rep(1:I, visit),]) + phix1\%*\% t(time * xi[rep(1:I, visit),]) + phiw \%*\% t(zeta) + matrix(rnorm(V*J,0,.1),V,J)
-library(HDLFPCA)
-re<-hd_lfpca(Y,T=scale(time,center=TRUE,scale=TRUE),J=J,I=I,visit=visit, varthresh=0.95, projectthresh=1,timeadjust=FALSE,figure=TRUE)
+V = 2500
+phix0 = matrix(0, V, 3)
+phix0[1:50, 1] <- .1
+
+phix0[1:50 + 50, 2] <- .1
+
+phix0[1:50 + 100, 3] <- .1
+phix1 = matrix(0, V, 3)
+
+phix1[1:50 + 150, 1] <- .1
+
+phix1[1:50 + 200, 2] <- .1
+
+phix1[1:50 + 250, 3] <- .1
+phiw = matrix(0, V, 3)
+
+phiw[1:50 + 300, 1] <- .1
+
+phiw[1:50 + 350, 2] <- .1
+
+phiw[1:50 + 400, 3] <- .1
+xi = t(matrix(rnorm(I * 3), ncol = I) * c(8, 4, 2)) * 3
+zeta = t(matrix(rnorm(J * 3), ncol = J) * c(8, 4, 2)) * 2
+Y = phix0 \%*\% t(xi[rep(1:I, visit), ]) +
+  phix1 \%*\% t(time * xi[rep(1:I, visit), ]) +
+  phiw \%*\% t(zeta) + matrix(rnorm(V * J, 0, .1), V, J)
+re <- HDLFPCA::hd_lfpca(
+  Y,
+  T = scale(time, center = TRUE, scale = TRUE),
+  J = J,
+  I = I,
+  visit = visit,
+  varthresh = 0.95,
+  projectthresh = 1,
+  timeadjust = FALSE,
+  figure = TRUE
+)
 cor(phix0, re$phix0)
 cor(phix1, re$phix1)
-library(gplots)
-par(mfrow=c(2,2),mar=rep(0.5,4),bg="gray")
-bs=c(-100:100)/1000*1.5
-image(phix0, axes=F,col=bluered(200),breaks=bs)
-image(re$phix0[,1:3], axes=F,col=bluered(200),breaks=bs)
-image(phix1, axes=F,col=bluered(200),breaks=bs)
-image(re$phix1[,1:3], axes=F,col=bluered(200),breaks=bs)
+if (requireNamespace("gplots", quietly = TRUE)) {
+  library(gplots)
+  par(mfrow = c(2, 2),
+      mar = rep(0.5, 4),
+      bg = "gray")
+  bs = c(-100:100) / 1000 * 1.5
+  image(phix0,
+        axes = FALSE,
+        col = bluered(200),
+        breaks = bs)
+  image(re$phix0[, 1:3],
+        axes = FALSE,
+        col = bluered(200),
+        breaks = bs)
+  image(phix1,
+        axes = FALSE,
+        col = bluered(200),
+        breaks = bs)
+  image(re$phix1[, 1:3],
+        axes = FALSE,
+        col = bluered(200),
+        breaks = bs)
+}
 }
 \references{
 Zipunnikov, V., Greven, S., Shou, H., Caffo, B., Reich, D. S., & Crainiceanu, C. (2014). Longitudinal High-Dimensional Principal Components Analysis with Application to Diffusion Tensor Imaging of Multiple Sclerosis. The Annals of Applied Statistics, 8(4), 2175–2202.

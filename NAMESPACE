@@ -2,3 +2,8 @@
 
 export(hd_lfpca)
 import(MASS)
+importFrom(grDevices,rainbow)
+importFrom(graphics,barplot)
+importFrom(graphics,text)
+importFrom(graphics,title)
+importFrom(stats,var)

@@ -1,12 +1,22 @@
 Package: HDLFPCA
 Type: Package
 Title: High-dimensional Longitudinal Principal Component Analysis
-Version: 1.1.0
-Author: Who wrote it
-Maintainer: Seonjoo Lee <sl3670@cumc.columbia.edu>
-Description: Conduct high-dimensional longitudinal principal component analysis
+Version: 1.1.1
+Authors@R: c(
+    person("Seonjoo", "Lee", email = "sl3670@cumc.columbia.edu", 
+    role = c("aut", "cre")),
+    person(given = "John",
+           family = "Muschelli",
+           email = "muschellij2@gmail.com",
+           role = c("ctb"),
+           comment = c(ORCID = "0000-0001-6469-1750"))    
+    )
+Description: Performs high-dimensional longitudinal 
+  principal component analysis.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Depends: MASS
-RoxygenNote: 7.1.0
+Imports: MASS
+RoxygenNote: 7.1.1
+Suggests: 
+    gplots
