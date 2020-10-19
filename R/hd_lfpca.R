@@ -37,7 +37,7 @@
 #' I = example_hd_data$I
 #' visit = example_hd_data$visit
 #' # indices = 1:2500 # all indices
-#' indices = 1:1000
+#' indices = 1:700
 #' re <- HDLFPCA::hd_lfpca(
 #'   Y[indices,],
 #'   T = scale(time, center = TRUE, scale = TRUE),
@@ -46,9 +46,8 @@
 #'   visit = example_hd_data$visit,
 #'   varthresh = 0.95,
 #'   projectthresh = 1,
-#'   timeadjust = FALSE,
-#'   figure = TRUE
-#' )
+#'   timeadjust = FALSE
+#'   )
 #'
 #' \donttest{
 #' cor(phix0[indices,], re$phix0)
@@ -127,20 +126,19 @@ hd_lfpca = function(Y,
   Y = t(scale(t(Y), center = TRUE, scale = FALSE)) # Y is centered.
 
   svdy = svd(t(Y) %*% Y) # There is a sign ambiguity between SVD and eigen function.
-  if (verbose > 0) {
-    message("Do not Reduce Dimension")
-  }
-
   if (dim(Y)[1] >= dim(Y)[2]) {
+    if (verbose > 0) {
+      message("Reduce Dimension")
+    }
     N = J_projected = sum(cumsum(svdy$d ^ 2) / sum(svdy$d ^ 2) < projectthresh) #Dimensionality #
   } else{
+    if (verbose > 0) {
+      message("Do not Reduce Dimension")
+    }
     #sum(cumsum(svdy$d^2)/sum(svdy$d^2)<projectthresh) #Dimensionality #
     N = J_projected = nrow(Y) - 1
   }
 
-  if (verbose > 0) {
-    message("Reduce Dimension")
-  }
   if (verbose > 1) {
     message(paste0("Projected dimension: ", J_projected))
   }
