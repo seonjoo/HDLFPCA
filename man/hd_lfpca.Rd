@@ -61,7 +61,6 @@ The dimension of the subspace is selected based on the variance explained by fir
 The default value is \code{projectthresh}=1.
 }
 \examples{
-data(example_hd_data)
 run_list = example_hd_data_small
 phix0 = run_list$phix0
 phix1 = run_list$phix1
