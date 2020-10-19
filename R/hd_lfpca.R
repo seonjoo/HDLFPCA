@@ -43,7 +43,7 @@
 #'   T = scale(time, center = TRUE, scale = TRUE),
 #'   J = J,
 #'   I = I,
-#'   visit = example_hd_data$visit,
+#'   visit = visit,
 #'   varthresh = 0.95,
 #'   projectthresh = 1,
 #'   timeadjust = FALSE
