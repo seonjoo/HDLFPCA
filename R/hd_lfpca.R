@@ -18,57 +18,37 @@
 #' @param projectthresh Threshold for variance explain in the first step of SVD
 #' @param timeadjust (default=FALSE) Scale time per subject
 #' @param figure should a bar plot of the variance explained be plotted?
-#' @return xi : Subject-specific principal component scores.
-#' @return phix0: Subject-specific principal component loadings corresponding to intercept.
-#' @return phix1: Subject-specific principal component loadings corresponding to slope.
-#' @return zeta : Subject-visit-specific principal component scores.
-#' @return phiw : Subject-visit-specific principal component loadings
+#' @return A list with the following elements:
+#' \describe{
+#' \item{xi}{Subject-specific principal component scores.}
+#' \item{phix0}{Subject-specific principal component loading corresponding to intercept.}
+#' \item{phix1}{Subject-specific principal component loading corresponding to slope.}
+#' \item{zeta}{Subject-visit-specific principal component scores.}
+#' \item{phiw}{Subject-visit-specific principal component loading}
+#' }
 #' @examples
-#' set.seed(12345678)
-#' I = 100
-#' visit = rpois(I, 1) + 3
-#' time = unlist(lapply(visit, function(x)
-#'   scale(c(0, cumsum(
-#'     rpois(x - 1, 1) + 1
-#'   )))))
-#' J = sum(visit)
-#' V = 2500
-#' phix0 = matrix(0, V, 3)
-#' phix0[1:50, 1] <- .1
-#'
-#' phix0[1:50 + 50, 2] <- .1
-#'
-#' phix0[1:50 + 100, 3] <- .1
-#' phix1 = matrix(0, V, 3)
-#'
-#' phix1[1:50 + 150, 1] <- .1
-#'
-#' phix1[1:50 + 200, 2] <- .1
-#'
-#' phix1[1:50 + 250, 3] <- .1
-#' phiw = matrix(0, V, 3)
-#'
-#' phiw[1:50 + 300, 1] <- .1
-#'
-#' phiw[1:50 + 350, 2] <- .1
-#'
-#' phiw[1:50 + 400, 3] <- .1
-#' xi = t(matrix(rnorm(I * 3), ncol = I) * c(8, 4, 2)) * 3
-#' zeta = t(matrix(rnorm(J * 3), ncol = J) * c(8, 4, 2)) * 2
-#' Y = phix0 %*% t(xi[rep(1:I, visit), ]) +
-#'   phix1 %*% t(time * xi[rep(1:I, visit), ]) +
-#'   phiw %*% t(zeta) + matrix(rnorm(V * J, 0, .1), V, J)
+#' data(example_hd_data)
+#' phix0 = example_hd_data$phix0
+#' phix1 = example_hd_data$phix1
+#' phiw = example_hd_data$phiw
+#' Y = example_hd_data$Y
+#' time = example_hd_data$time
+#' J = example_hd_data$J
+#' I = example_hd_data$I
+#' visit = example_hd_data$visit
 #' re <- HDLFPCA::hd_lfpca(
 #'   Y,
 #'   T = scale(time, center = TRUE, scale = TRUE),
 #'   J = J,
 #'   I = I,
-#'   visit = visit,
+#'   visit = example_hd_data$visit,
 #'   varthresh = 0.95,
 #'   projectthresh = 1,
 #'   timeadjust = FALSE,
 #'   figure = TRUE
 #' )
+#'
+#' \donttest{
 #' cor(phix0, re$phix0)
 #' cor(phix1, re$phix1)
 #' if (requireNamespace("gplots", quietly = TRUE)) {
@@ -94,20 +74,10 @@
 #'         col = bluered(200),
 #'         breaks = bs)
 #' }
+#' }
 #'
+#' \donttest{
 #' # need to transpose for SVD
-#' re <- HDLFPCA::hd_lfpca(
-#'   Y[1:400, ],
-#'   T = scale(time, center = TRUE, scale = TRUE),
-#'   J = J,
-#'   I = I,
-#'   visit = visit,
-#'   varthresh = 0.95,
-#'   projectthresh = 1,
-#'   timeadjust = FALSE,
-#'   figure = TRUE,
-#'   verbose = 2
-#' )
 #' re <- HDLFPCA::hd_lfpca(
 #'   Y[1:400, ],
 #'   T = scale(time, center = TRUE, scale = TRUE),
@@ -122,6 +92,7 @@
 #'   verbose = 2,
 #'   figure = TRUE
 #' )
+#' }
 #' @author Seonjoo Lee, \email{sl3670@cumc.columbia.edu}
 #' @references Zipunnikov, V., Greven, S., Shou, H., Caffo, B., Reich, D. S., & Crainiceanu, C. (2014). Longitudinal High-Dimensional Principal Components Analysis with Application to Diffusion Tensor Imaging of Multiple Sclerosis. The Annals of Applied Statistics, 8(4), 2175–2202.
 #' @keywords hdlfpca glmnet
