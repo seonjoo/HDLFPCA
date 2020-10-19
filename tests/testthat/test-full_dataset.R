@@ -108,3 +108,25 @@ testthat::test_that("works on subset data", {
 
 })
 
+
+testthat::test_that("Added in verbose and Nx > 20", {
+  indices = 1:400
+  re <- HDLFPCA::hd_lfpca(
+    Y[indices,],
+    T = scale(time, center = TRUE, scale = TRUE),
+    J = J,
+    I = I,
+    visit = visit,
+    Nw = 7,
+    Nx = 20,
+    varthresh = 0.95,
+    projectthresh = 1,
+    timeadjust = TRUE,
+    figure = TRUE,
+    verbose = 2
+  )
+
+
+
+})
+
