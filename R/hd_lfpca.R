@@ -36,8 +36,10 @@
 #' J = example_hd_data$J
 #' I = example_hd_data$I
 #' visit = example_hd_data$visit
+#' # indices = 1:2500 # all indices
+#' indices = 1:1000
 #' re <- HDLFPCA::hd_lfpca(
-#'   Y,
+#'   Y[indices,],
 #'   T = scale(time, center = TRUE, scale = TRUE),
 #'   J = J,
 #'   I = I,
@@ -49,15 +51,15 @@
 #' )
 #'
 #' \donttest{
-#' cor(phix0, re$phix0)
-#' cor(phix1, re$phix1)
+#' cor(phix0[indices,], re$phix0)
+#' cor(phix1[indices,], re$phix1)
 #' if (requireNamespace("gplots", quietly = TRUE)) {
 #'   library(gplots)
 #'   par(mfrow = c(2, 2),
 #'       mar = rep(0.5, 4),
 #'       bg = "gray")
 #'   bs = c(-100:100) / 1000 * 1.5
-#'   image(phix0,
+#'   image(phix0[indices,],
 #'         axes = FALSE,
 #'         col = bluered(200),
 #'         breaks = bs)
@@ -65,7 +67,7 @@
 #'         axes = FALSE,
 #'         col = bluered(200),
 #'         breaks = bs)
-#'   image(phix1,
+#'   image(phix1[indices,],
 #'         axes = FALSE,
 #'         col = bluered(200),
 #'         breaks = bs)
