@@ -1,6 +1,6 @@
 Package: HDLFPCA
 Type: Package
-Title: High-dimensional Longitudinal Principal Component Analysis
+Title: High-Dimensional Longitudinal Principal Component Analysis
 Version: 1.1.1
 Authors@R: c(
     person("Seonjoo", "Lee", email = "sl3670@cumc.columbia.edu", 

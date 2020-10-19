@@ -121,8 +121,19 @@ hd_lfpca = function(Y,
   # ylist : list of subjects.
   ###
   ### Y = [Y1 Y2... YI] = VDU' (p by J matrix)
-  ### Calcuate U using iterative calculation of sum(Yi'Yi)
+  ### Calculate U using iterative calculation of sum(Yi'Yi)
   #	Y_total_mean=apply(Y,1,mean)
+  if (I != length(visit)) {
+    warning("Visit should be length of subjects (I)")
+  }
+  n_visits = sum(visit)
+  if (n_visits != J) {
+    warning("Total number of visits should be equal to J")
+  }
+  if (n_visits != ncol(Y)) {
+    warning("Number of visits should total number of observations (columns of Y)")
+  }
+
   Y = t(scale(t(Y), center = TRUE, scale = FALSE)) # Y is centered.
 
   svdy = svd(t(Y) %*% Y) # There is a sign ambiguity between SVD and eigen function.
