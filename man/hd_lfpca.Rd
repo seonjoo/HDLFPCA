@@ -61,7 +61,7 @@ The dimension of the subspace is selected based on the variance explained by fir
 The default value is \code{projectthresh}=1.
 }
 \examples{
-run_list = example_hd_data_small
+run_list = generate_hd_data(I = 20)
 phix0 = run_list$phix0
 phix1 = run_list$phix1
 phiw = run_list$phiw
@@ -84,7 +84,7 @@ re <- HDLFPCA::hd_lfpca(
   )
 
 \donttest{
-run_list = example_hd_data
+run_list = generate_hd_data(I = 100)
 phix0 = run_list$phix0
 phix1 = run_list$phix1
 phiw = run_list$phiw

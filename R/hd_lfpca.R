@@ -27,7 +27,7 @@
 #' \item{phiw}{Subject-visit-specific principal component loading}
 #' }
 #' @examples
-#' run_list = example_hd_data_small
+#' run_list = generate_hd_data(I = 20)
 #' phix0 = run_list$phix0
 #' phix1 = run_list$phix1
 #' phiw = run_list$phiw
@@ -50,7 +50,7 @@
 #'   )
 #'
 #' \donttest{
-#' run_list = example_hd_data
+#' run_list = generate_hd_data(I = 100)
 #' phix0 = run_list$phix0
 #' phix1 = run_list$phix1
 #' phiw = run_list$phiw

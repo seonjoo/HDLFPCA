@@ -1,5 +1,6 @@
 testthat::context("Trying HDLFPCA")
-data(example_hd_data)
+example_hd_data = generate_hd_data(I = 100)
+
 phix0 = example_hd_data$phix0
 phix1 = example_hd_data$phix1
 phiw = example_hd_data$phiw

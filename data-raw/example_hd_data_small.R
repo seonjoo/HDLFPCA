@@ -47,4 +47,4 @@ example_hd_data_small = list(
   time = time,
   visit = visit
 )
-usethis::use_data(example_hd_data_small, overwrite = TRUE)
+usethis::use_data(example_hd_data_small, overwrite = TRUE, compress = "xz")
