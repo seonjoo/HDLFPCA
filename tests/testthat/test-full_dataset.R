@@ -1,14 +1,16 @@
 testthat::context("Trying HDLFPCA")
+data(example_hd_data)
+phix0 = example_hd_data$phix0
+phix1 = example_hd_data$phix1
+phiw = example_hd_data$phiw
+Y = example_hd_data$Y
+time = example_hd_data$time
+J = example_hd_data$J
+I = example_hd_data$I
+visit = example_hd_data$visit
+
 testthat::test_that("works on full data", {
-  data(example_hd_data)
-  phix0 = example_hd_data$phix0
-  phix1 = example_hd_data$phix1
-  phiw = example_hd_data$phiw
-  Y = example_hd_data$Y
-  time = example_hd_data$time
-  J = example_hd_data$J
-  I = example_hd_data$I
-  visit = example_hd_data$visit
+
   indices = 1:nrow(Y)
   re <- HDLFPCA::hd_lfpca(
     Y[indices,],
@@ -49,3 +51,59 @@ testthat::test_that("works on full data", {
     c(0.677984623456904, -0.410937698650476, 0.16902003091013, 0.0194506415030195)
   )
 })
+
+
+
+testthat::test_that("works on subset data", {
+  indices = 1:400
+  re <- HDLFPCA::hd_lfpca(
+    Y[indices,],
+    T = scale(time, center = TRUE, scale = TRUE),
+    J = J,
+    I = I,
+    visit = visit,
+    Nw = 7,
+    Nx = 4,
+    varthresh = 0.95,
+    projectthresh = 1,
+    timeadjust = TRUE,
+    figure = TRUE
+  )
+
+
+  testthat::expect_equal(mean(re$phiw*1000), -2.63946792438721)
+  testthat::expect_equal(
+    colMeans(re$phix0*1000),
+    c(13.3493723861197, -13.3580732255287,
+      -14.2666551815559, -18.5168153134067
+    )
+  )
+  testthat::expect_equal(
+    colMeans(re$phix1*1000),
+    c(12.9816278713505, -13.9120079554871,
+      -10.9841124093542, -10.2772410142864
+    )
+  )
+  testthat::expect_equal(re$Nw, 7L)
+  testthat::expect_equal(re$Nx, 4L)
+
+  testthat::expect_equal(
+    re$sx,
+    c(559.122970613659, 110.110616086869, 43.7670421892069, 4.30591146765645
+    )
+  )
+  testthat::expect_equal(
+    re$sw,
+    c(114.444177475096, 30.295055513728, 12.4159339484643, 11.7040242553597,
+      5.021148985976, 3.14593397314224, 0.0513151608548925)
+  )
+
+  testthat::expect_equal(re$residual, 4132.61295466348)
+  testthat::expect_equal(
+    rowMeans(re$xi),
+    c(0.75594903527378, -0.218963018530693, 0.194753903278344, 0.0231163909575934
+    )
+  )
+
+})
+

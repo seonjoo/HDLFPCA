@@ -16,3 +16,6 @@
 #' \item{zeta}{true zeta}
 #' }
 "example_hd_data"
+
+#' @rdname example_hd_data
+"example_hd_data_small"

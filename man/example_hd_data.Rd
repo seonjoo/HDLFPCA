@@ -3,6 +3,7 @@
 \docType{data}
 \name{example_hd_data}
 \alias{example_hd_data}
+\alias{example_hd_data_small}
 \title{Example High-dimension data for PCA}
 \format{
 A list with 7 elements, which are:
@@ -18,9 +19,13 @@ A list with 7 elements, which are:
 \item{xi}{covariate values}
 \item{zeta}{true zeta}
 }
+
+An object of class \code{list} of length 11.
 }
 \usage{
 example_hd_data
+
+example_hd_data_small
 }
 \description{
 A list containing random sample data for HDLFPCA

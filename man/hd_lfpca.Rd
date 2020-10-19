@@ -62,14 +62,15 @@ The default value is \code{projectthresh}=1.
 }
 \examples{
 data(example_hd_data)
-phix0 = example_hd_data$phix0
-phix1 = example_hd_data$phix1
-phiw = example_hd_data$phiw
-Y = example_hd_data$Y
-time = example_hd_data$time
-J = example_hd_data$J
-I = example_hd_data$I
-visit = example_hd_data$visit
+run_list = example_hd_data_small
+phix0 = run_list$phix0
+phix1 = run_list$phix1
+phiw = run_list$phiw
+Y = run_list$Y
+time = run_list$time
+J = run_list$J
+I = run_list$I
+visit = run_list$visit
 # indices = 1:2500 # all indices
 indices = 1:700
 re <- HDLFPCA::hd_lfpca(
@@ -84,6 +85,27 @@ re <- HDLFPCA::hd_lfpca(
   )
 
 \donttest{
+run_list = example_hd_data
+phix0 = run_list$phix0
+phix1 = run_list$phix1
+phiw = run_list$phiw
+Y = run_list$Y
+time = run_list$time
+J = run_list$J
+I = run_list$I
+visit = run_list$visit
+# indices = 1:2500 # all indices
+indices = 1:700
+re <- HDLFPCA::hd_lfpca(
+  Y[indices,],
+  T = scale(time, center = TRUE, scale = TRUE),
+  J = J,
+  I = I,
+  visit = visit,
+  varthresh = 0.95,
+  projectthresh = 1,
+  timeadjust = FALSE
+  )
 cor(phix0[indices,], re$phix0)
 cor(phix1[indices,], re$phix1)
 if (requireNamespace("gplots", quietly = TRUE)) {
