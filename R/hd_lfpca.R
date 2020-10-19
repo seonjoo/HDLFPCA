@@ -94,6 +94,34 @@
 #'         col = bluered(200),
 #'         breaks = bs)
 #' }
+#'
+#' # need to transpose for SVD
+#' re <- HDLFPCA::hd_lfpca(
+#'   Y[1:400, ],
+#'   T = scale(time, center = TRUE, scale = TRUE),
+#'   J = J,
+#'   I = I,
+#'   visit = visit,
+#'   varthresh = 0.95,
+#'   projectthresh = 1,
+#'   timeadjust = FALSE,
+#'   figure = TRUE,
+#'   verbose = 2
+#' )
+#' re <- HDLFPCA::hd_lfpca(
+#'   Y[1:400, ],
+#'   T = scale(time, center = TRUE, scale = TRUE),
+#'   J = J,
+#'   I = I,
+#'   visit = visit,
+#'   Nw = 20,
+#'   Nx = 16,
+#'   varthresh = 0.95,
+#'   projectthresh = 1,
+#'   timeadjust = TRUE,
+#'   verbose = 2,
+#'   figure = TRUE
+#' )
 #' @author Seonjoo Lee, \email{sl3670@cumc.columbia.edu}
 #' @references Zipunnikov, V., Greven, S., Shou, H., Caffo, B., Reich, D. S., & Crainiceanu, C. (2014). Longitudinal High-Dimensional Principal Components Analysis with Application to Diffusion Tensor Imaging of Multiple Sclerosis. The Annals of Applied Statistics, 8(4), 2175–2202.
 #' @keywords hdlfpca glmnet
@@ -125,41 +153,31 @@ hd_lfpca = function(Y,
   #	Y_total_mean=apply(Y,1,mean)
   Y = t(scale(t(Y), center = TRUE, scale = FALSE)) # Y is centered.
 
-  if (dim(Y)[1] >= dim(Y)[2]) {
-    svdy = svd(t(Y) %*% Y) # There is a sign ambiguity between SVD and eigen function.
-    if (verbose > 0) {
-      message("Reduce Dimension")
-    }
-    N = J_projected = sum(cumsum(svdy$d ^ 2) / sum(svdy$d ^ 2) < projectthresh) #Dimensionality #
-    if (verbose > 0) {
-      message("Reduce Dimension")
-    }
-    if (verbose > 1) {
-      message(paste0("Projected dimension: ", J_projected))
-    }
-    U = svdy$v[, 1:J_projected]
-    D = diag(sqrt(svdy$d[1:J_projected]))
-    S = diag(svdy$d[1:J_projected])
-
-    V = Y %*% U %*% solve(D)
-    Ynew = t(V[, 1:J_projected]) %*% Y #D %*% t(U)
-    rm(list = c("svdy"))
-  } else{
-    svdy = svd(t(Y) %*% Y) # There is a sign ambiguity between SVD and eigen function.
-    if (verbose > 0) {
-      message("Do not Reduce Dimension")
-    }
-    N = J_projected = nrow(Y) - 1#sum(cumsum(svdy$d^2)/sum(svdy$d^2)<projectthresh) #Dimensionality #
-    if (verbose > 1) {
-      message(paste0("Projected dimension: ", J_projected))
-    }
-    U = svdy$v[, 1:J_projected]
-    D = diag(sqrt(svdy$d[1:J_projected]))
-    S = diag(svdy$d[1:J_projected])
-    V = Y %*% U %*% solve(D)
-    Ynew = t(V[, 1:J_projected]) %*% Y #D %*% t(U)
-    rm(list = c("svdy"))
+  svdy = svd(t(Y) %*% Y) # There is a sign ambiguity between SVD and eigen function.
+  if (verbose > 0) {
+    message("Do not Reduce Dimension")
   }
+
+  if (dim(Y)[1] >= dim(Y)[2]) {
+    N = J_projected = sum(cumsum(svdy$d ^ 2) / sum(svdy$d ^ 2) < projectthresh) #Dimensionality #
+  } else{
+    #sum(cumsum(svdy$d^2)/sum(svdy$d^2)<projectthresh) #Dimensionality #
+    N = J_projected = nrow(Y) - 1
+  }
+
+  if (verbose > 0) {
+    message("Reduce Dimension")
+  }
+  if (verbose > 1) {
+    message(paste0("Projected dimension: ", J_projected))
+  }
+  U = svdy$v[, 1:J_projected]
+  D = diag(sqrt(svdy$d[1:J_projected]))
+  S = diag(svdy$d[1:J_projected])
+
+  V = Y %*% U %*% solve(D)
+  Ynew = t(V[, 1:J_projected]) %*% Y #D %*% t(U)
+  rm(list = c("svdy"))
 
 
   Yvec = matrix(0, J_projected ^ 2, sum(visit ^ 2))
@@ -216,8 +234,9 @@ hd_lfpca = function(Y,
   #Estimate the components
   if (is.na(Nx) | is.na(Nw)) {
     lim = 1
-    Nw0 = Nx0 = Nw = Nx = min(J_projected, sum(Ax$values > 0), sum(Aw$values >
-                                                                     0))
+    Nw0 = Nx0 = Nw = Nx = min(J_projected,
+                              sum(Ax$values > 0),
+                              sum(Aw$values > 0))
 
     while (lim > varthresh) {
       if (min(Aw$values[1:Nw]) < min(Ax$values[1:Nx])) {
@@ -225,8 +244,9 @@ hd_lfpca = function(Y,
       } else{
         Nx = Nx0 - 1
       }
-      lim = (sum(Ax$values[1:Nx]) + sum(Aw$values[1:Nw])) / (sum(Ax$values[1:sum(Ax$values >
-                                                                                   0)]) + sum(Aw$values[1:sum(Aw$values > 0)]))
+      lim = (sum(Ax$values[1:Nx]) + sum(Aw$values[1:Nw])) /
+        (sum(Ax$values[1:sum(Ax$values > 0)]) +
+           sum(Aw$values[1:sum(Aw$values > 0)]))
 
       Nx0 <- Nx
       Nw0 <- Nw

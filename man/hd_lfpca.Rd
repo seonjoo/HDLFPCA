@@ -132,6 +132,34 @@ if (requireNamespace("gplots", quietly = TRUE)) {
         col = bluered(200),
         breaks = bs)
 }
+
+# need to transpose for SVD
+re <- HDLFPCA::hd_lfpca(
+  Y[1:400, ],
+  T = scale(time, center = TRUE, scale = TRUE),
+  J = J,
+  I = I,
+  visit = visit,
+  varthresh = 0.95,
+  projectthresh = 1,
+  timeadjust = FALSE,
+  figure = TRUE,
+  verbose = 2
+)
+re <- HDLFPCA::hd_lfpca(
+  Y[1:400, ],
+  T = scale(time, center = TRUE, scale = TRUE),
+  J = J,
+  I = I,
+  visit = visit,
+  Nw = 20,
+  Nx = 16,
+  varthresh = 0.95,
+  projectthresh = 1,
+  timeadjust = TRUE,
+  verbose = 2,
+  figure = TRUE
+)
 }
 \references{
 Zipunnikov, V., Greven, S., Shou, H., Caffo, B., Reich, D. S., & Crainiceanu, C. (2014). Longitudinal High-Dimensional Principal Components Analysis with Application to Diffusion Tensor Imaging of Multiple Sclerosis. The Annals of Applied Statistics, 8(4), 2175–2202.
